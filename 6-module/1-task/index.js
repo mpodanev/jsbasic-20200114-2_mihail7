@@ -17,7 +17,25 @@ class ClearedTable {
   constructor(data) {
     this.el = document.createElement('table');
     this.data = data;
+    this.columnTitles = ['Name', 'Age', 'Salary', 'City'];
+    this.el.insertAdjacentElement('beforeend', this.createTheadElement());
+
   }
+
+  createTdTemplate = function(el) {
+    return `<td>${el}</td>`;
+  };
+
+  createTheadElement = function() {
+    let thead = document.createElement('thead');
+    for (const it of this.columnTitles) {
+      thead.innerHTML += this.createTdTemplate(it);
+    }
+    return thead;
+  };
+
+
+
 
   /**
    * Метод который выщывается после удалении строки
