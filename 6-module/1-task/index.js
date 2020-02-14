@@ -18,21 +18,31 @@ class ClearedTable {
     this.el = document.createElement('table');
     this.data = data;
     this.columnTitles = ['Name', 'Age', 'Salary', 'City'];
-    this.el.insertAdjacentElement('beforeend', this.createTheadElement());
+    this.el.append(this.createTheadElement());
 
   }
 
-  createTdTemplate = function(el) {
+  createTdTemplate(el) {
     return `<td>${el}</td>`;
-  };
+  }
 
-  createTheadElement = function() {
+  createTableRow(elem) {
+    let tr = document.createElement('tr');
+    tr.innerHTML = elem;
+    return tr;
+  }
+
+  createTheadElement() {
     let thead = document.createElement('thead');
+    let rowTemplate = '';
     for (const it of this.columnTitles) {
-      thead.innerHTML += this.createTdTemplate(it);
+      rowTemplate += this.createTdTemplate(it);
     }
+    const trElement = this.createTableRow(rowTemplate);
+    thead.append(trElement);
+    console.log('My log: ', thead);
     return thead;
-  };
+  }
 
 
 
