@@ -18,30 +18,58 @@ class ClearedTable {
     this.el = document.createElement('table');
     this.data = data;
     this.columnTitles = ['Name', 'Age', 'Salary', 'City'];
-    this.el.append(this.createTheadElement());
-
+    this.el.classList.add('pure-table');
+    this.el.append(this.createTheadElement(this.columnTitles), this.createTbodyElement(this.columnTitles, this.data));
+    this.el.addEventListener('click', (evt) => {
+      if (evt.target.tagName !== 'A') {
+        return;
+      }
+      evt.target.closest('tr').remove();
+      this.onRemoved(+evt.target.dataset.id);
+    });
   }
 
   createTdTemplate(el) {
     return `<td>${el}</td>`;
   }
 
-  createTableRow(elem) {
+  createTableRow(template) {
     let tr = document.createElement('tr');
-    tr.innerHTML = elem;
+    tr.innerHTML = template;
     return tr;
   }
 
-  createTheadElement() {
+  createTheadElement(elements) {
     let thead = document.createElement('thead');
     let rowTemplate = '';
-    for (const it of this.columnTitles) {
+
+    for (const it of elements) {
       rowTemplate += this.createTdTemplate(it);
     }
-    const trElement = this.createTableRow(rowTemplate);
+
+    let trElement = this.createTableRow(rowTemplate);
+    trElement.append(document.createElement('td'));
+
     thead.append(trElement);
-    console.log('My log: ', thead);
     return thead;
+  }
+
+  createTbodyElement(elements, data) {
+    let tbody = document.createElement('tbody');
+    let rowTemplate = '';
+
+    for (let el of data) {
+      for (let i = 0; i < elements.length; i++) {
+        rowTemplate += this.createTdTemplate(el[elements[i].toLowerCase()]);
+      }
+      rowTemplate += `<td><a href="#delete" data-id="${el.id}">X</a></td>`;
+      let trElement = this.createTableRow(rowTemplate);
+
+      tbody.append(trElement);
+      rowTemplate = '';
+    }
+
+    return tbody;
   }
 
 
@@ -51,7 +79,9 @@ class ClearedTable {
    * Метод который выщывается после удалении строки
    * @param {number} id - идентификатор удаляемого пользователя
    */
-  onRemoved(id) {}
+  onRemoved(id) {
+    console.log(`Из таблицы удален пользователь ${id}`);
+  }
 }
 
 window.ClearedTable = ClearedTable;
