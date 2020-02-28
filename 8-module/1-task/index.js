@@ -4,20 +4,22 @@ class ProductList {
 
   constructor(element) {
     this.el = element;
-    this.productsList = '';
+    this.productsList = [];
     this.el.addEventListener('click', (evt) => {
       if (evt.target.hasAttribute('data-button-role')) {
         if (confirm('Вы уверенны, что хотите добавить этот товар в корзину?')) {
           let productID = evt.target.closest('.products-list-product').getAttribute('data-product-id');
+          let currentProduct = this.productsList.filter(it => it.id === +productID)[0];
           if (!localStorage.getItem(this.productsStoreKey)) {
-            let productsForStorageJSON = JSON.stringify(new Array(productID));
+            let productsForStorageJSON = JSON.stringify(new Array(currentProduct));
             localStorage.setItem(this.productsStoreKey, productsForStorageJSON);
-          } else if (this.checkIsProductAddedToCart(productID)) {
-            console.info('Products has in basket', productID);
+          } else if (this.checkIsProductAddedToCart(currentProduct)) {
+            console.info('The product already in basket', productID);
           } else {
             let productsFromStorageJSON = localStorage.getItem('cart-products');
             let productsFromStorage = JSON.parse(productsFromStorageJSON);
-            productsFromStorage.push(productID);
+            productsFromStorage.push(currentProduct);
+
             let productsForStorageJSON = JSON.stringify(productsFromStorage);
             localStorage.setItem(this.productsStoreKey, productsForStorageJSON);
           }
@@ -31,7 +33,7 @@ class ProductList {
     let productsFromStorage = JSON.parse(productsFromStorageJSON);
 
     return !!productsFromStorage && productsFromStorage.some((productsFromStorage) => {
-      return productsFromStorage === product;
+      return productsFromStorage.id === product.id;
     });
   }
 
@@ -39,10 +41,12 @@ class ProductList {
     return fetch(this.productsUrl)
     .then(response => response.json())
     .then(json => {
+      let productsListTemplate = '';
+      this.productsList = json;
       for (const it of json) {
-        this.productsList += this.getProductTemplate(it);
+        productsListTemplate += this.getProductTemplate(it);
       }
-      this.el.innerHTML = this.getContainerTemplate(this.productsList);
+      this.el.innerHTML = this.getContainerTemplate(productsListTemplate);
     });
   }
 
