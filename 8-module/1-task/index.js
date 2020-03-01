@@ -12,7 +12,7 @@ class ProductList {
           let currentProduct = this.productsList.filter(it => it.id === +productID)[0];
           if (!localStorage.getItem(this.productsStoreKey)) {
             let productsForStorageJSON = JSON.stringify(new Array(currentProduct));
-            localStorage.setItem(this.productsStoreKey, productsForStorageJSON);
+            this.addProducntToLocalStorage(productsForStorageJSON);
           } else if (this.checkIsProductAddedToCart(currentProduct)) {
             console.info('The product already in basket', productID);
           } else {
@@ -21,11 +21,15 @@ class ProductList {
             productsFromStorage.push(currentProduct);
 
             let productsForStorageJSON = JSON.stringify(productsFromStorage);
-            localStorage.setItem(this.productsStoreKey, productsForStorageJSON);
+            this.addProducntToLocalStorage(productsForStorageJSON);
           }
         }
       }
     });
+  }
+
+  addProducntToLocalStorage(productsList) {
+    localStorage.setItem(this.productsStoreKey, productsList);
   }
 
   checkIsProductAddedToCart(product) {
